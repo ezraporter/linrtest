@@ -28,10 +28,7 @@ jobs:
       - name: Install rcmdcheck
         run: |
           renv::install("rcmdcheck")
+          renv::update()
         shell: Rscript {0}
 
       - uses: r-lib/actions/check-r-package@v2
-      
-      - name: session info
-        run: cat(packageVersion("tidyselect"))
-        shell: Rscript {0}
