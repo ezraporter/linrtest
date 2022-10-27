@@ -6,13 +6,14 @@ on:
   pull_request:
     branches: [main, master]
 
-name: lint
+name: R-CMD-check
 
 jobs:
-  lint:
+  R-CMD-check:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
     steps:
       - uses: actions/checkout@v2
 
@@ -20,11 +21,14 @@ jobs:
         with:
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      - uses: r-lib/actions/setup-renv@v2
         with:
-          extra-packages: any::lintr, local::.
-          needs: lint
+          cache-version: 2
 
-      - name: Lint
-        run: lintr::lint_package()
+      - name: Install rcmdcheck
+        run: |
+          renv::install("rcmdcheck")
+          renv::update()
         shell: Rscript {0}
+
+      - uses: r-lib/actions/check-r-package@v2
